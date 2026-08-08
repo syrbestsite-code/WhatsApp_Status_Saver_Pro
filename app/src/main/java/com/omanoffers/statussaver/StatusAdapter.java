@@ -10,6 +10,7 @@ import android.widget.*;
 import java.io.*;
 import java.util.*;
 import android.os.Environment;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.VH>{
  private final Context c; private final ArrayList<File> data;
