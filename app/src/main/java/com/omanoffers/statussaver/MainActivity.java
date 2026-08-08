@@ -14,6 +14,7 @@ import java.util.*;
 public class MainActivity extends Activity {
     private RecyclerView grid;
     private TextView info;
+    private StatusAdapter adapter;
     private ArrayList<File> items=new ArrayList<>();
     private final String BASE="/storage/emulated/0/Android/media/com.whatsapp/WhatsApp/";
 
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
         grid=findViewById(R.id.grid); info=findViewById(R.id.info);
         grid.setLayoutManager(new GridLayoutManager(this,2));
         findViewById(R.id.refresh).setOnClickListener(v->load());
+        findViewById(R.id.delete_all).setOnClickListener(v->deleteAll());
         if(Build.VERSION.SDK_INT>=30 && !Environment.isExternalStorageManager()) requestFilesAccess();
         load();
     }
@@ -41,9 +43,7 @@ public class MainActivity extends Activity {
         items.clear();
         File root=new File(BASE+"accounts");
         ArrayList<File> statusDirs=new ArrayList<>();
-        // Primary account
         statusDirs.add(new File(BASE+"Media/.Statuses"));
-        // All alternate accounts, including 1016
         if(root.isDirectory()){
             File[] accounts=root.listFiles();
             if(accounts!=null) for(File a:accounts)
@@ -56,7 +56,28 @@ public class MainActivity extends Activity {
         }
         Collections.sort(items,(a,b)->Long.compare(b.lastModified(),a.lastModified()));
         info.setText("تم العثور على "+items.size()+" حالة");
-        grid.setAdapter(new StatusAdapter(this,items));
+        adapter=new StatusAdapter(this,items);
+        grid.setAdapter(adapter);
+    }
+
+    private void deleteAll(){
+        if(items.isEmpty()){
+            Toast.makeText(this,"لا توجد حالات لحذفها",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new AlertDialog.Builder(this)
+            .setTitle("حذف الكل")
+            .setMessage("هل أنت متأكد من حذف جميع الحالات ("+items.size()+" ملف)؟")
+            .setPositiveButton("نعم",(d,w)->{
+                int deleted=0;
+                for(File f:items){
+                    if(f.exists() && f.delete()) deleted++;
+                }
+                Toast.makeText(this,"تم حذف "+deleted+" ملف",Toast.LENGTH_LONG).show();
+                load();
+            })
+            .setNegativeButton("إلغاء",null)
+            .show();
     }
 
     private boolean media(File f){
