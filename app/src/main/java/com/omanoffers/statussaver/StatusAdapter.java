@@ -39,6 +39,8 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.VH>{
   h.view.setOnClickListener(v->open(f));
  }
 
+ @Override public int getItemCount(){return data.size();}
+
  private Bitmap thumb(File f){
   String n=f.getName().toLowerCase(Locale.ROOT);
   if(n.endsWith(".mp4")||n.endsWith(".3gp")||n.endsWith(".mkv")||n.endsWith(".mov"))
