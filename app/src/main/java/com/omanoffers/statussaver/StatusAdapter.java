@@ -4,6 +4,7 @@ import android.content.*;
 import android.net.Uri;
 import android.graphics.*;
 import android.media.ThumbnailUtils;
+import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.view.*;
 import android.widget.*;
@@ -100,7 +101,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.VH>{
    byte[] buf=new byte[16384]; int n;
    while((n=in.read(buf))!=-1)out.write(buf,0,n);
    out.flush();
-   // إضافة الملف إلى المعرض
    MediaScannerConnection.scanFile(c, new String[]{dst.getAbsolutePath()},
     new String[]{mime(dst)}, null);
    Toast.makeText(c,"✅ تم الحفظ في المعرض",Toast.LENGTH_LONG).show();
